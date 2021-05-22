@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>用户登录 - <?=config('APP_TITLE')?></title>
+    <link rel="stylesheet" href="./css/style08.css">
+  </head>
+  <body>
+    <div class="main container">
+      <div class="box">
+        <div class="box-title"><span>个人旅行博客 账号登录</span><a href="register.php">还没有帐号？马上注册</a></div>
+        <div class="box-wp">
+          <form method="post" action="?token=<?=TOKEN?>">
+            <table class="box-account">
+              <tr><th>用户名</th><td>
+                <?php if(IS_AUTOLOGIN): ?><!-- 如果记住密码了，显示用户信息 -->
+                  <input type="text" value="<?=htmlspecialchars(input('cookie', 'fun_auto_name', 's'))?>" disabled>
+                <?php else: ?>
+                  <input type="text" name="name" value="<?=htmlspecialchars($name)?>">
+                <?php endif; ?>
+              </td></tr>
+              <tr><th>密　码</th><td>
+                <?php if(IS_AUTOLOGIN): ?>
+                  <input type="text" value="已保存，可直接登录" disabled>
+                <?php else: ?>
+                  <input type="password" name="password">
+                <?php endif; ?>
+              </td></tr>
+              <tr><th></th><td class="box-account-ck"><label><input type="checkbox" name="auto" value="1" <?=IS_AUTOLOGIN ? 'checked' : ''?>>记住登录状态</label></td></tr>
+              <tr><td class="box-account-act" colspan="2"><input class="ui-btn" type="submit" value="登录"></td></tr>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

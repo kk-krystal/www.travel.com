@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>旅游博客网</title>
+<link href="css/style08.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="js/js08.js"></script>
+<style>
+	body{
+		background-color:#f0f9fe;
+	}
+</style>
+</head>
+<body>
+<!--head-->
+<div id="main">
+<div id="head">
+  <div class="top"> 
+    	<h1 class="logo"><img src="images/logg3.png" width="130" height="130" /></h1>
+        <div class="right">
+		 	<?php if(IS_LOGIN): ?>
+        	欢迎您，<a href="user.php"><strong><?=user('name')?></strong></a><i></i><a href="login.php?action=logout&token=<?=TOKEN?>">退出</a>
+      	<?php else: ?>
+        	<a href="login.php">登录</a><i></i><a href="register.php">注册</a>
+      	<?php endif; ?>
+        </div>
+        <div class="title">
+            <p>旅游博客</p>
+        </div>
+	    <ul class="nav">
+            <li><a href="index.php">首页</a></li>
+            <li><a href="./?cid=1">美食</a></li>
+            <li><a href="./?cid=2">旅游</a></li>
+             <li><a href="./?cid=3">住宿</a></li>
+            <li><a href="./?cid=4">景点</a></li>
+            <li><a href="post.php?type=pic">发布博客</a></li>
+     	</ul>	  
+	</div>
+</div>
+
+<!--banner-->
+<div id="banner">
+    <ul class="banner_pic" id="banner_pic">
+        <li class="current" ><a href="show.php?id=29"><img src="./uploads/picture/2020-12/28/148840e53a816f06450c0da7b0733e04.jpg" width="800" height="379" ></a></li>
+        <li class="pic"><a href="show.php?id=25""><img src="./uploads/picture/2020-12/28/7e19c376e6b2d439e8575e5117fb8b73.jpg" width="800" height="379" ></img></a></li>
+        <li class="pic" ><a href="show.php?id=24""><img  src="./uploads/picture/2020-12/28/09b6e8492e6e184e092b75f98447a403.jpg" width="800" height="379" ></img></a></li>
+    </ul>
+    <ol id="button">
+     	<li class="current"></li>
+        <li class="but"></li>
+        <li class="but"></li>
+
+  </ol>
+</div>
+
+<!--content-->
+<div id="content">
+    <div class="left">
+        <div class="left_top">
+            <h1>最新</h1>
+        </div>
+        <div class="wp-l">
+          <?php if ($author): ?>
+            <div class="wp-l-subject"><a href="?author=<?=$author?>">查看用户发表的内容</a></div>
+          <?php elseif ($cid): foreach ($category as $v): if ($v['id'] == $cid): ?>
+            <div class="wp-l-subject"><a href="?cid=<?=$cid?>"><?=$v['name']?></a></div>
+          <?php endif; endforeach; endif; ?>
+          <?php foreach ($list as $v): ?>
+          <!-- 所属模块 -->
+          <div class="wp-l-lst">
+           <?php if ($v['cname']): ?><div class="wp-l-cate"><?=htmlspecialchars($v['cname'])?></div><?php endif; ?> 
+            <!-- 作者头像、用户名、发布时间 -->
+            <div class="wp-l-author">
+              <div class="wp-l-author-name">
+                <img src="<?=($v['avatar'] ? './uploads/avatar/' . $v['avatar'] : './images/noavatar.gif')?>">
+                <a href="?author=<?=$v['uid']?>"><?=$v['name']?></a>
+              </div>
+              <div class="wp-l-author-time"><?=date('Y-m-d', $v['time'])?></div>
+            </div>
+            <!-- 内容浏览 -->
+            <div class="wp-l-content">
+               <a href="show.php?id=<?=$v['id']?>" target="_blank"><?=htmlspecialchars(mb_strimwidth($v['content'], 0, 200))?>...</a>
+            </div>
+            <!-- 预览图或预览视频 -->
+            <div class="wp-l-atch">
+              <?php if (!empty($v['preview'])): if ($v['type'] == 'pic'): ?>
+                <a href="show.php?id=<?=$v['id']?>" target="_blank"><img src="./uploads/picture/<?=$v['preview']?>" height='100px'></a>
+              <?php elseif ($v['type'] == 'video'): ?>
+                <embed src="<?=htmlspecialchars($v['preview'])?>" allowFullScreen="true" quality="high" type="application/x-shockwave-flash">
+              <?php endif; endif; ?>
+            </div>
+            <!-- 阅读量和访问量 -->
+            <div class="wp-l-act">
+              <a class="wp-l-act-hits" href="show.php?id=<?=$v['id']?>" title="访问量"><?=$v['hits']?></a>
+              <a class="wp-l-act-reply" href="show.php?id=<?=$v['id']?>#reply" title="回复量"><?=$v['reply']?></a>
+            </div>
+            <!-- 编辑和删除操作 -->
+            <?php if (IS_ADMIN || $v['uid'] == user('id')): ?>
+            <div class="wp-l-adm">
+              <a href="post.php?id=<?=$v['id']?>">[编辑]</a><a class="js-post-confirm" href="post.php?action=del&id=<?=$v['id']?>&token=<?=TOKEN?>">[删除]</a>
+            </div>
+            <?php endif; ?>
+          </div>
+          <?php endforeach; ?>
+          <!-- 分页导航 -->
+		<?=page_html("./?type=$type&cid=$cid&page=",$total,$page,config('APP_PAGESIZE'))?>
+        </div>
+    </div>
+	<div class="right">
+    	<div class="right_top">
+            <h1>热搜</h1>
+        </div>
+        <div class="part02">
+            <dl>
+                <dd>
+                    <a href="./cid=?4">【景点】<span>热门景点</span></a>
+                    <a href="#">【美食】<span>美食评价</span></a>
+                    <a href="#">【酒店】<span>旅店评分</span></a>
+                    <a href="#">【更多】<span>更多...</span></a>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="left_bottom">
+        	<h2>展示</h2>
+            <div id="imgbox" class="imgbox">
+        	   <span>
+                	<a href="show.php?id=29"><img src="./uploads/picture/2020-12/28/148840e53a816f06450c0da7b0733e04.jpg" width="800" height="379" ></img></a>
+       				<a href="show.php?id=25""><img src="./uploads/picture/2020-12/28/7e19c376e6b2d439e8575e5117fb8b73.jpg" width="800" height="379" ></img></a>
+       				<a href="show.php?id=24""><img  src="./uploads/picture/2020-12/28/09b6e8492e6e184e092b75f98447a403.jpg" width="800" height="379" ></img></a>
+       	        </span>
+          </div>
+    </div>
+        
+
+</div>
+<!-- footer -->
+<div id="footer">
+		<p>温馨提示：本网站只有已登录的用户可以发表作品 ！</p>
+		<p><?php require './usercount.php' ?><p>
+  		<p>欢迎您！您是本站的第<?php require './visits.php'; echo $counter; ?>位访客！</p>
+</div>
+</div>
+</body>
+</html>
